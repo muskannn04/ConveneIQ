@@ -1,0 +1,14 @@
+flask>=2.3,<3.0
+gunicorn
+python-dotenv
+transformers
+sentencepiece
+google-genai
+requests
+sqlalchemy
+psycopg2-binary
+dateparser
+apscheduler
+deepgram-sdk
+psycopg2-binary
+locust

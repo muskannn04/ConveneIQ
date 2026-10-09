@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MeetSync - History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #F0F2FF;
+      --surface:      #FFFFFF;
+      --border:       #E0E4F5;
+      --border-light: #ECF0FF;
+      --primary:      #4F46E5;
+      --primary-2:    #7C3AED;
+      --primary-light:#EEF2FF;
+      --text:         #111827;
+      --text-muted:   #6B7280;
+      --success:      #059669;
+      --warning:      #D97706;
+      --danger:       #DC2626;
+      --success-bg:   #ECFDF5;
+      --warning-bg:   #FFFBEB;
+      --danger-bg:    #FEF2F2;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --shadow:       0 4px 24px rgba(79,70,229,0.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    nav {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 62px;
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links { display: flex; gap: 6px; }
+
+    .nav-link {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    /* Page header */
+    .page-header {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 24px 32px;
+    }
+
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .page-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Main container */
+    .main { max-width: 820px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* Table header */
+    .table-header {
+      display: grid;
+      grid-template-columns: 1fr 160px 100px 90px;
+      padding: 8px 20px;
+      margin-bottom: 8px;
+    }
+
+    .th {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Meeting row */
+    .meeting-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 8px;
+      display: grid;
+      grid-template-columns: 1fr 160px 100px 90px;
+      align-items: center;
+      gap: 12px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    .meeting-card:hover {
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .meeting-filename {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meeting-date {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .meeting-time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    .badge::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .badge-success   { background: var(--success-bg); color: var(--success); }
+    .badge-failed    { background: var(--danger-bg);  color: var(--danger);  }
+    .badge-processing{ background: var(--warning-bg); color: var(--warning); }
+
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 16px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      font-family: 'Outfit', sans-serif;
+      transition: background 0.2s;
+    }
+
+    .btn-view:hover { background: #DDE2FF; }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 32px;
+    }
+
+    .page-btn {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .page-arrow {
+      width: auto;
+      padding: 0 14px;
+      font-size: 0.8rem;
+    }
+
+    /* States */
+    .state-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+      padding: 64px 24px;
+    }
+
+    .state-icon { font-size: 2rem; margin-bottom: 14px; opacity: 0.35; }
+
+    .state-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .state-sub { font-size: 0.82rem; color: #9CA3AF; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">MeetSync</span>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Upload</a>
+      <a href="/history" class="nav-link active">History</a>
+      <a href="/tasks/search" class="nav-link">Tasks</a>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="page-title">Meeting History</div>
+    <div class="page-sub">All your processed recordings in one place</div>
+  </div>
+
+  <div class="main">
+
+    <div class="table-header">
+      <div class="th">Recording</div>
+      <div class="th">Date</div>
+      <div class="th">Status</div>
+      <div class="th"></div>
+    </div>
+
+    <div id="meetings-list">
+      <div class="state-box">
+        <div class="state-icon">⏳</div>
+        <div class="state-title">Loading meetings…</div>
+      </div>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <script>
+    let currentPage = 1;
+
+    async function loadMeetings(page) {
+      currentPage = page;
+      const res  = await fetch(`/api/meetings?page=${page}`);
+      const data = await res.json();
+      const list = document.getElementById('meetings-list');
+      const pag  = document.getElementById('pagination');
+
+      if (!data.meetings || data.meetings.length === 0) {
+        list.innerHTML = `
+          <div class="state-box">
+            <div class="state-icon">📭</div>
+            <div class="state-title">No meetings found</div>
+            <div class="state-sub">Upload a recording to get started</div>
+          </div>`;
+        pag.innerHTML = '';
+        return;
+      }
+
+      list.innerHTML = data.meetings.map(m => `
+        <div class="meeting-card">
+          <div>
+            <div class="meeting-filename">${m.filename}</div>
+            ${m.processing_time_seconds ? `<div class="meeting-date">${m.processing_time_seconds}s processing</div>` : ''}
+          </div>
+          <div class="meeting-date">${m.created_at}</div>
+          <div><span class="badge badge-${m.processing_status}">${m.processing_status}</span></div>
+          <div>
+            ${m.processing_status === 'success'
+              ? `<a href="/result/${m.id}" class="btn-view">View →</a>`
+              : ''}
+          </div>
+        </div>
+      `).join('');
+
+      // Pagination
+      pag.innerHTML = '';
+
+      const prev = document.createElement('button');
+      prev.className = 'page-btn page-arrow';
+      prev.textContent = '← Prev';
+      prev.disabled = page === 1;
+      prev.onclick = () => loadMeetings(page - 1);
+      pag.appendChild(prev);
+
+      for (let i = 1; i <= data.total_pages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `page-btn${i === page ? ' active' : ''}`;
+        btn.textContent = i;
+        btn.onclick = () => loadMeetings(i);
+        pag.appendChild(btn);
+      }
+
+      const next = document.createElement('button');
+      next.className = 'page-btn page-arrow';
+      next.textContent = 'Next →';
+      next.disabled = page === data.total_pages;
+      next.onclick = () => loadMeetings(page + 1);
+      pag.appendChild(next);
+    }
+
+    loadMeetings(1);
+  </script>
+</body>
+</html>
